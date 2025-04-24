@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Are you sure you want to delete this purchase history?</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'create_purchase' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

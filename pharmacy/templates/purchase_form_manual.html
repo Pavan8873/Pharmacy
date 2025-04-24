@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="bg-white p-5 rounded shadow">
+        <h2 class="mb-4 text-primary">Add Purchase History (Manual)</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Medicine Name</label>
+                    <input type="text" name="medicine_name" class="form-control" value="{{ request.POST.medicine_name }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" name="company_name" class="form-control" value="{{ request.POST.company_name }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Medicine Type</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="medicine_type" value="tablet" {% if request.POST.medicine_type == 'tablet' %}checked{% endif %}>
+                        <label class="form-check-label">Tablet</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="medicine_type" value="cream/jel" {% if request.POST.medicine_type == 'cream/jel' %}checked{% endif %}>
+                        <label class="form-check-label">Cream/Jel</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="medicine_type" value="liquid" {% if request.POST.medicine_type == 'liquid' %}checked{% endif %}>
+                        <label class="form-check-label">Liquid</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Pack Quantity</label>
+                    <input type="number" name="pack_quantity" class="form-control" value="{{ request.POST.pack_quantity }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Quantity per Strip</label>
+                    <input type="number" name="qty_per_strip" class="form-control" value="{{ request.POST.qty_per_strip }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Free Medicine Quantity</label>
+                    <input type="number" name="free_medicine_qty" class="form-control" value="{{ request.POST.free_medicine_qty }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Expiry Date</label>
+                    <input type="date" name="expiry_date" class="form-control" value="{{ request.POST.expiry_date }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">MRP Rate</label>
+                    <input type="number" step="0.01" name="mrp_rate" class="form-control" value="{{ request.POST.mrp_rate }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Shop Rate</label>
+                    <input type="number" step="0.01" name="shop_rate" class="form-control" value="{{ request.POST.shop_rate }}">
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary w-100">Save Purchase</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-5 bg-white p-4 rounded shadow">
+        <h3 class="mb-4 text-primary">Purchase History</h3>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Type</th>
+                        <th>Pack Qty</th>
+                        <th>Qty/Strip</th>
+                        <th>Free Qty</th>
+                        <th>Company</th>
+                        <th>Expiry</th>
+                        <th>MRP</th>
+                        <th>Shop Rate</th>
+                        <th>Total ₹</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                        <tr>
+                            <td>{{ purchase.medicine_name }}</td>
+                            <td>{{ purchase.medicine_type }}</td>
+                            <td>{{ purchase.pack_quantity }}'s</td>
+                            <td>{{ purchase.qty_per_strip }}</td>
+                            <td>{{ purchase.free_medicine_qty }}</td>
+                            <td>{{ purchase.company_name }}</td>
+                            <td>{{ purchase.expiry_date }}</td>
+                            <td>{{ purchase.mrp_rate }}</td>
+                            <td>{{ purchase.shop_rate }}</td>
+                            <td>{{ purchase.total_amount }}</td>
+                            <td>
+                                <a href="{% url 'edit_purchase' purchase.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'delete_purchase' purchase.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="11" class="text-center">No purchase records found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

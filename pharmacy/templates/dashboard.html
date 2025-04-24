@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<style>
+  .welcome-card {
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>
+
+<div class="container mt-5">
+  <!-- Welcome Section -->
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow-lg border-0 rounded-4 welcome-card">
+        <div class="card-body text-center bg-light">
+          <h2 class="card-title mb-3 text-success">
+            <i class="bi bi-person-circle"></i> Welcome, {{ user.username }}!
+          </h2>
+          <p class="card-text text-muted fs-5">Choose an option from the navigation bar to get started.</p>
+          <hr>
+          <a href="{% url 'logout' %}" class="btn btn-outline-danger mt-3">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="row mt-4 g-4">
+
+    <!-- Profile Details Card -->
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-info text-white">
+          <i class="bi bi-person-circle"></i> Profile Details
+        </div>
+        <div class="card-body text-center">
+          <h4>{{ user.username }}</h4>
+          <p>Email: {{ user.email }}</p>
+          <p>Role: {{ user.profile.get_role_display }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-info text-white">
+          <i class="bi bi-building"></i> Company Details
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ companies_count }}</h3>
+          <p>Companies Registered</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-capsule-pill"></i> Medicine Details
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ medicines_count }}</h3>
+          <p>Medicines Available</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchase Bill -->
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-warning text-dark">
+          <i class="bi bi-file-earmark-text"></i> Purchase Bill Details
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ purchase_bills_count }}</h3>
+          <p>Purchase Bills</p>
+        </div>
+      </div>
+    </div>
+    <!-- Sales & Profit Cards -->
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-warning text-dark">
+          <i class="bi bi-file-earmark-text"></i> Today's Sale Amount
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ todays_sales|floatformat:2 }}</h3>
+          <p>Sales Recorded Today</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-danger text-white">
+          <i class="bi bi-cash-coin"></i> Today's Profit Amount
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ todays_profit|floatformat:2 }}</h3>
+          <p>Profit Recorded Today</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-cart-check"></i> Total Sale Amount
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ total_sales|floatformat:2 }}</h3>
+          <p>Total Sales Recorded</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-cash-coin"></i> Total Profit Amount
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ total_profit|floatformat:2 }}</h3>
+          <p>Total Profit Recorded</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Company and Medicine Details -->
+    
+
+    <!-- Stock & Expiry Alerts -->
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-secondary text-white">
+          <i class="bi bi-box-seam"></i> Stock Details
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ low_stock_medicines }}</h3>
+          <p>Total Units in Stock</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-dark text-white">
+          <i class="bi bi-exclamation-triangle"></i> Expiring Soon
+        </div>
+        <div class="card-body text-center">
+          <h3>{{ expiring_soon_medicines }}</h3>
+          <p>Medicines Expiring Soon</p>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End of Dashboard Cards -->
+</div>
+{% endblock %}

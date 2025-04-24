@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Edit Purchase History</h2>
+    <form method="POST" class="bg-white p-4 shadow rounded">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Medicine Name</label>
+                <input type="text" name="medicine_name" class="form-control" value="{{ purchase.medicine_name }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Medicine Type</label>
+                <input type="text" name="medicine_type" class="form-control" value="{{ purchase.medicine_type }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Pack Quantity</label>
+                <input type="number" name="pack_quantity" class="form-control" value="{{ purchase.pack_quantity }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Quantity per Strip</label>
+                <input type="number" name="qty_per_strip" class="form-control" value="{{ purchase.qty_per_strip }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Free Medicine Quantity</label>
+                <input type="number" name="free_medicine_qty" class="form-control" value="{{ purchase.free_medicine_qty }}">
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Company Name</label>
+                <input type="text" name="company_name" class="form-control" value="{{ purchase.company_name }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Expiry Date</label>
+                <input type="date" name="expiry_date" class="form-control" value="{{ purchase.expiry_date }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">MRP Rate</label>
+                <input type="number" name="mrp_rate" class="form-control" value="{{ purchase.mrp_rate }}" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Shop Rate</label>
+                <input type="number" name="shop_rate" class="form-control" value="{{ purchase.shop_rate }}" required>
+            </div>
+            
+            
+            
+            <div class="col-md-12 mb-3 text-center">
+                <button type="submit" class="btn btn-warning">Update Purchase</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

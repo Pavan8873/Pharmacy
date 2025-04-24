@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice Details</title>
+  <style>
+    body {
+      font-family: monospace;
+      font-size: 0.7em;
+      margin: 0;
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    .row-container {
+      display: flex;
+      border: 1px solid #ccc;
+      padding: 15px;
+      flex-wrap: wrap;
+    }
+
+    .section {
+      flex: 1;
+      min-width: 300px;
+      padding: 0 15px;
+      border-right: 1px solid #ccc;
+    }
+
+    .section:last-child {
+      border-right: none;
+    }
+
+    .company-name {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .address,
+    .label,
+    .value {
+      font-size: 0.9em;
+      margin-bottom: 4px;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      text-decoration: underline;
+    }
+
+    .row {
+      display: flex;
+      margin-bottom: 4px;
+    }
+
+    .row .label {
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .row .value {
+      flex: 1;
+    }
+
+    .invoice-table-container {
+      overflow-x: auto;
+      margin: 20px;
+    }
+
+    .invoice-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 300px;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .invoice-table th {
+      background-color: #f5f5f5;
+    }
+
+    .col-qty,
+    .col-free,
+    .col-mrp,
+    .col-rate,
+    .col-disc,
+    .col-gst,
+    .col-amount {
+      text-align: right;
+    }
+    .calculation-table {
+        border-collapse: collapse;
+        width: 80%;
+      }
+      .calculation-table th, .calculation-table td {
+        border: 1px solid #ccc;
+        padding: 2px 5px;
+        text-align: right;
+        white-space: nowrap;
+      }
+      .calculation-table th {
+        font-weight: bold;
+      }
+      .text-left {
+        text-align: left;
+      }
+      .grand-total {
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+    
+  </style>
+</head>
+<body>
+
+<div class="row-container">
+  <div class="section">
+    <div class="company-name">ANIT PHARMA</div>
+    <div class="address">CHANDRAVADAN PLAZA, SHOP NO. 3, 2ND FLOOR,</div>
+    <div class="address">BEHIND ICICI BANK, TAXIES STAND ROAD,</div>
+    <div class="address">DHARWAD - 580001.</div>
+    <div class="label">Phone:</div>
+    <div class="value">(0836) 2772725, 998605208</div>
+    <div class="label">GSTIN:</div>
+    <div class="value">29ANOPS8922L1ZY</div>
+    <div class="label">D.L. NO:</div>
+    <div class="value">KA/DWR/20B-1087, 21B-1036</div>
+    <div class="row"><div class="label">FSSAI:</div><div class="value">---</div></div>
+    <div class="row"><div class="label">PAN:</div><div class="value">---</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Buyer Details</div>
+    <div class="row"><div class="label">Name:</div><div class="value">DR. BHARATI PUJARI</div></div>
+    <div class="row"><div class="label">Parent:</div><div class="value">(CBT AKKIPETH)</div></div>
+    <div class="row"><div class="label">Place:</div><div class="value">DHARWAD, DHARWAD</div></div>
+    <div class="row"><div class="label">Phone:</div><div class="value">8296746673</div></div>
+
+    <div class="section-title">Invoice</div>
+    <div class="row"><div class="label">Invoice:</div><div class="value">A00043</div></div>
+    <div class="row"><div class="label">D.L. NO:</div><div class="value">REG NO 45480</div></div>
+    <div class="row"><div class="label">Date:</div><div class="value">07-04-2025</div></div>
+    <div class="row"><div class="label">Time:</div><div class="value">16:17</div></div>
+    <div class="row"><div class="label">FSSAI:</div><div class="value">---</div></div>
+    <div class="row"><div class="label">PAN:</div><div class="value">---</div></div>
+  </div>
+</div>
+
+<div class="invoice-table-container">
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th>HSN C</th>
+        <th>Product Name</th>
+        <th>Pack</th>
+        <th>Mfr/Mk</th>
+        <th>Batch No.</th>
+        <th>Exp</th>
+        <th class="col-qty">Qty</th>
+        <th class="col-free">Free</th>
+        <th class="col-mrp">M.R.P.</th>
+        <th class="col-rate">Rate</th>
+        <th class="col-disc">Disc %</th>
+        <th class="col-gst">GST %</th>
+        <th class="col-amount">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>30049029</td>
+        <td>ZOCON 150MG TABLET</td>
+        <td>5'S</td>
+        <td>FDC</td>
+        <td>074430</td>
+        <td>9/27</td>
+        <td>15</td>
+        <td>-</td>
+        <td>81.04</td>
+        <td>53.89</td>
+        <td>12.00</td>
+        <td>12.00</td>
+        <td>866.35</td>
+      </tr>
+      <tr>
+        <td>30049099</td>
+        <td>NVP CARE-OD TAB</td>
+        <td>10'S</td>
+        <td>FEMI</td>
+        <td>SPF3920</td>
+        <td>10/26</td>
+        <td>30</td>
+        <td>-</td>
+        <td>88.00</td>
+        <td>63.57</td>
+        <td>12.00</td>
+        <td>12.00</td>
+        <td>1907.10</td>
+      </tr>
+      <tr>
+        <td>30049021</td>
+        <td>KZ CREAM</td>
+        <td>30GM</td>
+        <td>H&</td>
+        <td>HHV287</td>
+        <td>11/26</td>
+        <td>7</td>
+        <td>-</td>
+        <td>245.00</td>
+        <td>175.00</td>
+        <td>12.00</td>
+        <td>12.00</td>
+        <td>1225.00</td>
+      </tr>
+      <tr>
+        <td>30049021</td>
+        <td>KZ CREAM</td>
+        <td>30GM</td>
+        <td>H&</td>
+        <td>HHV235</td>
+        <td>11/26</td>
+        <td>3</td>
+        <td>-</td>
+        <td>245.00</td>
+        <td>175.00</td>
+        <td>12.00</td>
+        <td>12.00</td>
+        <td>525.00</td>
+      </tr>
+      <tr>
+        <td>30049099</td>
+        <td>SYSTRON NGR TAB</td>
+        <td>10'S</td>
+        <td>SYST</td>
+        <td>SNCR2416</td>
+        <td>10/26</td>
+        <td>29</td>
+        <td>-</td>
+        <td>168.00</td>
+        <td>116.28</td>
+        <td>5.00</td>
+        <td>12.00</td>
+        <td>3314.22</td>
+      </tr>
+      <tr>
+        <td>30049099</td>
+        <td>FOLICURE 5 TAB</td>
+        <td>10'S</td>
+        <td>USW</td>
+        <td>24S2370743</td>
+        <td>9/26</td>
+        <td>10</td>
+        <td>-</td>
+        <td>187.04</td>
+        <td>133.60</td>
+        <td>3.00</td>
+        <td>12.00</td>
+        <td>1336.00</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+<table class="calculation-table">
+  <thead>
+    <tr>
+      <th>FLASH: GST 0196737696511, TS&amp;GST:611.79,CST:</th>
+ 
+
+    </tr>
+    <tr>
+      <th>CLASS</th>
+      <th>SUB TOTAL</th>
+      <th>DISC</th>
+      <th>SGST</th>
+      <th>CGST</th>
+      <th>COST</th>
+      <th>TOTAL GST</th>
+      <th>SUB TOTAL</th>
+      <th>1051157</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left">GST 0.00%</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>DISCOUNT</td>
+      <td>1051.57</td>
+      
+    </tr>
+    <tr>
+      <td class="text-left">GST 5.00%</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>GST PAYABLE</td>
+      <td>315.34</td>
+      
+    </tr>
+    <tr>
+      <td class="text-left">GST 12.00%</td>
+      <td>1051.57</td>
+      <td>315.34</td>
+      <td>61.79</td>
+      <td>61.79</td>
+      <td>1223.56</td>
+      <td>123.58</td>
+      <td>FREIGHT</td>
+      <td>123.58</td>
+      
+      
+    </tr>
+    <tr>
+      <td class="text-left">GST 18 %</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>CROR</td>
+      <td>0.00</td>
+     
+     
+    </tr>
+    <tr>
+      <td class="text-left">GST 28 %</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>ROUND OFF</td>
+      
+      <td>0.00</td>
+     
+      
+    </tr>
+    <tr>
+      <td>SUB TOTAL</td>
+      <td>1051.57</td>
+      <td>315.34</td>
+      <td>61.79</td>
+      <td>61.79</td>
+      <td>1223.56</td>
+      <td>0.19</td>
+      <td >G TOTAL</td>
+   
+      <td colspan="5" class="grand-total">11420.00</td>
+      
+    </tr>
+    <tr>
+      <td>Rs. Eleven Thousand Four Hundred Twenty Only</td>
+     
+    </tr>
+
+    <tr>
+      
+      
+    </tr>
+  </tbody>
+</table>
+
+<br>
+
+<div style="font-size: 0.8em;">
+  <div style="margin-bottom: 10px;">
+    <strong style="text-align: left;">Terms &amp; Conditions</strong><br>
+    Goods once sold will not be taken back or exchanged.<br>
+    Bills not paid due date will attract 24% interest.<br>
+    All disputes subject to DHARWAD Jurisdiction only. E. &amp; O.E. L.R.No :
+  </div>
+  <div>
+    CR.DT: 07-04-2025<br>
+    Transport :<br>
+    Cases : 0
+  </div>
+  <div style="margin-top: 20px; text-align: right;">
+    For ANIT PHARMA<br><br>
+    <div style="border-bottom: 1px solid #000; width: 150px; margin-left: auto; margin-right: 0;"></div>
+    Authorized Signatory
+  </div>
+</div>
+</body>
+</html>

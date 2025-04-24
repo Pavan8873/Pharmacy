@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Bill PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h2, h4, h5 {
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Purchase Bill</h2>
+    <h4>Company: {{ company.name }}</h4>
+    <h5>Bill ID: {{ bill.id }}</h5>
+    <h5>Date: {{ bill.created_at|date:"d-m-Y H:i" }}</h5>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Buy Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in medicines %}
+            <tr>
+                <td>{{ item.name }}</td>
+                {% if item.payment_type == 'free' %}
+                    <td>₹0.00</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹0.00</td>
+                {% else %}
+                    <td>₹{{ item.buy_price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.total }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="3">Total Price</td>
+                <td>₹{{ total_price }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

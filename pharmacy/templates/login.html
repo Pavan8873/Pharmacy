@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .card {
+    animation: fadeInUp 0.8s ease;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .btn-primary, .btn-primary:focus, .btn-primary:active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.05);
+    transition: 0.3s ease;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    border-color: #0d6efd;
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-header bg-primary text-white text-center rounded-top">
+          <h3 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Login</h3>
+        </div>
+        <div class="card-body bg-white">
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+            {% if error %}
+              <div class="alert alert-danger animate__animated animate__shakeX">{{ error }}</div>
+            {% endif %}
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-door-open-fill"></i> Login
+              </button>
+              <a href="{% url 'register' %}" class="btn btn-primary px-4">
+                <i class="bi bi-person-plus-fill"></i> Register
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
