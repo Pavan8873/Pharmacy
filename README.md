@@ -10,7 +10,7 @@ A full-featured web-based Pharmacy Management System designed to automate and ma
 - **Frontend:** HTML, CSS, Bootstrap, JavaScript  
 - **Database:** MySQL / SQLite  
 - **Authentication:** Django Auth  
-- **Others:** jQuery, AJAX (if used), PDF Generation (optional)
+- **Others:** jQuery, AJAX 
 
 ---
 
