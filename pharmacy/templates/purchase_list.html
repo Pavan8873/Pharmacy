@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purchase List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Purchase List</h1>
+
+    {% if purchases %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Bill Number</th>
+                    <th>Bill Date</th>
+                    <th>Vendor Name</th>
+                    <th>Medicine Name</th>
+                    <th>Qty</th>
+                    <th>Purchase Rate</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases %}
+                    <tr>
+                        <td>{{ purchase.bill.bill_number }}</td>
+                        <td>{{ purchase.bill.bill_date }}</td>
+                        <td>{{ purchase.company_name }}</td>
+                        <td>{{ purchase.medicine_name }}</td>
+                        <td>{{ purchase.qty_in_strip }}</td>
+                        <td>{{ purchase.shop_rate }}</td>
+                        <td>{{ purchase.total_amount }}</td>
+                        <td>{{ purchase.bill.payment_status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-message">No purchase records found.</p>
+    {% endif %}
+</body>
+</html>

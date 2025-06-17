@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3><strong>{{ medicine_name }}</strong>--<strong>{{ batch_number }}</strong></h3>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Purchase Date</th>
+                <th>Quantity</th>
+             
+                <th>Expiry Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in purchases %}
+            <tr>
+                <td>{{ item.purchase_date }}</td>
+                <td>{{ item.qty_in_strip }}</td>
+
+                <td>{{ item.expiry_date }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No purchase records found.</td>
+            </tr>
+            {% endfor %}
+            
+            {% if purchases %}
+                <tr class="table-light">
+                    <td><strong>Total</strong></td>
+                    <td><strong>{{ total_quantity }}</strong></td>
+                    
+                    <td></td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="text-start mt-4">
+        <a href="{% url 'medicine_list_view' %}" class="btn btn-secondary">← Back to Medicine Inventory</a>
+    </div>
+</div>
+{% endblock %}

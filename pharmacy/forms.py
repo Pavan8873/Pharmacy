@@ -62,7 +62,55 @@ from .models import PurchaseHistory
 class PurchaseHistoryForm(forms.ModelForm):
     class Meta:
         model = PurchaseHistory
-        fields = ['medicine_name', 'medicine_type', 'pack_quantity', 'qty_per_strip', 'free_medicine_qty', 'company_name', 'expiry_date', 'mrp_rate', 'shop_rate']
+        fields = [
+            'medicine_name',
+            'qty_in_strip',
+            'free_medicine_qty',
+            'company_name',
+            'expiry_date',
+            'mrp_rate',
+            'shop_rate'
+        ]
         widgets = {
-            'expiry_date': forms.DateInput(attrs={'type': 'date'}),
+            'medicine_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'qty_in_strip': forms.NumberInput(attrs={'class': 'form-control'}),
+            'free_medicine_qty': forms.NumberInput(attrs={'class': 'form-control'}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'expiry_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'mrp_rate': forms.NumberInput(attrs={'class': 'form-control'}),
+            'shop_rate': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+# forms.py
+
+from django import forms
+from .models import Vendor
+
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['name', 'address', 'telephone', 'gstin']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'telephone': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'gstin': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+        }
+
+from django import forms
+from .models import MedicineMaster
+
+class MedicineMasterForm(forms.ModelForm):
+    class Meta:
+        model = MedicineMaster
+        fields = '__all__'
+        widgets = {
+            'expiry_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'purchase_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MedicineMasterForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if not isinstance(field.widget, forms.DateInput):
+                field.widget.attrs['class'] = 'form-control'

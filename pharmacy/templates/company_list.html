@@ -41,42 +41,27 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3><i class="bi bi-building"></i> Company List</h3>
-    <a href="{% url 'add_company' %}" class="btn btn-success">
-      <i class="bi bi-building-circle bi-patch-plus"></i> Add Company
-    </a>
-  </div
-  
-  
+    <!-- If there's a separate model for companies, enable this link -->
+    <!-- <a href="{% url 'add_company' %}" class="btn btn-success">
+      <i class="bi bi-building-fill-add"></i> Add Company
+    </a> -->
+  </div>
+
   <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover shadow-sm rounded">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>License No</th>
-          <th>Contact</th>
-          <th>Email</th>
-          <th>Actions</th>
+          <th>Company Name</th>
         </tr>
       </thead>
       <tbody>
         {% for company in companies %}
           <tr>
-            <td>{{ company.name }}</td>
-            <td>{{ company.license_no }}</td>
-            <td>{{ company.contact_no }}</td>
-            <td>{{ company.email }}</td>
-            <td>
-              <a href="{% url 'update_company' company.id %}" class="btn btn-sm btn-info">
-                <i class="bi bi-pencil-square"></i> Edit
-              </a>
-              <a href="{% url 'delete_company' company.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this company?')">
-                <i class="bi bi-trash"></i> Delete
-              </a>
-            </td>
+            <td>{{ company.company_name }}</td>
           </tr>
         {% empty %}
           <tr>
-            <td colspan="5" class="text-center text-muted">No companies found.</td>
+            <td class="text-center text-muted">No companies found.</td>
           </tr>
         {% endfor %}
       </tbody>

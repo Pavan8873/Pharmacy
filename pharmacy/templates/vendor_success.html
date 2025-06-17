@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="alert alert-success rounded-4 shadow">
+        <h4>Vendor added successfully!</h4>
+        <a href="{% url 'add_vendor' %}" class="btn btn-primary mt-3">Add Another Vendor</a>
+    </div>
+</div>
+{% endblock %}

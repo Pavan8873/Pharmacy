@@ -116,60 +116,67 @@
       <a href="{% url 'purchase_history' %}"><i class="bi bi-clock-history"></i> Purchase History</a>
       <a href="{% url 'sales_history' %}"><i class="bi bi-receipt-cutoff"></i> Sale History</a>
       <hr> -->
+      
+      <a href="{% url 'add_vendor' %}"><i class="bi bi-pencil-square"></i> Vendor Details</a>
       <a href="{% url 'create_purchase' %}"><i class="bi bi-pencil-square"></i> Purchase Register</a>
       <a href="{% url 'sales_register_view' %}"><i class="bi bi-pencil-square"></i> Sales Register</a>
-      <a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      <a href="{% url 'view_medicine_details' %}"><i class="bi bi-pencil-square"></i> Medicine List</a>
+      <a href="{% url 'medicine_list_view' %}"><i class="bi bi-pencil-square"></i> Purchase History</a>
+
+
+      <!-- <a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a> -->
     {% else %}
-      <a href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+      <!-- <a href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a> -->
     {% endif %}
   </div>
 
   <!-- Main Content -->
   <div class="main-content">
     <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">
-          <i class="bi bi-capsule-pill me-2"></i> Pharmacy
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient" style="background-color: #2c3e50;">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold fs-3" href="{% url 'dashboard' %}">
+            <i class="bi bi-capsule-pill me-2 text-warning"></i> PharmaEase
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse fade-in" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            {% if user.is_authenticated %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'company_list' %}">
-                  <i class="bi bi-building"></i> Companies
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'medicine_list' %}">
-                  <i class="bi bi-capsule"></i> Medicines
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarBills" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-receipt"></i> Bills
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarBills">
-                  <li>
-                    <a class="dropdown-item" href="{% url 'generate_purchase_bill' %}">
-                      <i class="bi bi-cart-plus"></i> Purchase Bill
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link text-light" href="{% url 'company_list' %}">
+                        <i class="bi bi-building me-2"></i> Companies
                     </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="{% url 'generate_sale_bill' %}">
-                      <i class="bi bi-cash-coin"></i> Sale Bill
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link text-light" href="{% url 'view_medicine_details' %}">
+                        <i class="bi bi-capsule me-2"></i> Medicines
                     </a>
-                  </li>
-                </ul>
-              </li>
-            {% endif %}
-          </ul>
+                </li>
+                
+                
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link text-light" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link text-light" href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="nav-link text-light" href="{% url 'register' %}">
+                        <i class="bi bi-person-plus me-2"></i> Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Main Content Area -->
     <div class="container mt-4 fade-in">

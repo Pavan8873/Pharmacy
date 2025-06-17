@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Vendor List Card -->
+    <div class="card shadow-lg border-0 rounded-4 p-4 mb-5">
+        <h2 class="text-center text-primary mb-4">Vendor List</h2>
+
+        <!-- Add Vendor Form -->
+        <form method="post" action="{% url 'add_vendor' %}" class="row g-3 mb-4">
+            {% csrf_token %}
+            <div class="col-md-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" name="address" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="telephone" class="form-label">Telephone</label>
+                <input type="text" name="telephone" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="gstin" class="form-label">GSTIN</label>
+                <input type="text" name="gstin" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Add Vendor</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Telephone</th>
+                        <th>GSTIN</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vendor in vendors %}
+                    <tr>
+                        <td>{{ vendor.name }}</td>
+                        <td>{{ vendor.address }}</td>
+                        <td>{{ vendor.telephone }}</td>
+                        <td>{{ vendor.gstin }}</td>
+                        <td>
+                            <a href="{% url 'vendor_bills' vendor.id %}" class="btn btn-sm btn-primary">View Bills</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if selected_vendor %}
+    <!-- Vendor Bill History Section -->
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <h3 class="text-secondary mb-4">Bills for Vendor: {{ selected_vendor.name }}</h3>
+
+        {% if bills %}
+        <form method="post" action="{% url 'bulk_mark_bills_paid' selected_vendor.id %}">
+            {% csrf_token %}
+            <div class="row">
+                {% for bill in bills %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card shadow-sm border border-light h-100">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {% if bill.payment_status != 'success' %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="bill_ids" value="{{ bill.id }}" id="bill-{{ bill.id }}">
+                                            <label class="form-check-label fw-semibold text-primary" for="bill-{{ bill.id }}">
+                                                Bill #{{ bill.bill_number }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <h6 class="mb-0">
+                                       
+                                            <span class="ms-2 text-success fw-semibold">Bill #{{ bill.bill_number }}</span>
+                                        </h6>
+                                    {% endif %}
+                                </div>
+
+                                <ul class="list-unstyled small mb-3">
+                                    <li><strong>Bill Date:</strong> {{ bill.bill_date|date:"Y-m-d" }}</li>
+                                    <li><strong>Amount:</strong> ₹{{ bill.bill_amount }}</li>
+                                    <li><strong>Payment Mode:</strong> {{ bill.payment_mode|title }}</li>
+                                    {% if bill.payment_mode == 'cheque' %}
+                                        <li><strong>Cheque No:</strong> {{ bill.cheque_number }}</li>
+                                        <li><strong>Cheque Date:</strong> {{ bill.cheque_date|date:"Y-m-d" }}</li>
+                                    {% endif %}
+                                    <li>
+                                        <strong>Status:</strong>
+                                        {% if bill.payment_status == 'success' %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+
+                                <a href="{% url 'purchase_bill_details' bill.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="mt-4">
+                <h5 class="text-secondary">Payment Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="bill_date" class="form-label">Bill Date</label>
+                        <input type="date" name="bill_date" id="bill_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="payment_mode" class="form-label">Payment Mode</label>
+                        <select name="payment_mode" id="payment_mode" class="form-select" required>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 cheque-fields d-none">
+                        <label for="cheque_number" class="form-label">Cheque Number</label>
+                        <input type="text" name="cheque_number" class="form-control">
+                    </div>
+                    <div class="col-md-4 cheque-fields d-none">
+                        <label for="cheque_date" class="form-label">Cheque Date</label>
+                        <input type="date" name="cheque_date" class="form-control">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">Mark Selected Bills as Paid</button>
+                </div>
+            </div>
+
+        </form>
+        {% else %}
+        <div class="alert alert-info">No bills found for this vendor.</div>
+        {% endif %}
+        <!-- Date Filter Form -->
+        <div class="mt-4">
+            <form method="get" class="row g-3 mb-4 align-items-end">
+                <div class="col-md-4">
+                    <label for="bill_date" class="form-label fw-semibold">Bill Date</label>
+                    <input type="date" id="bill_date" name="bill_date" class="form-control" value="{{ selected_date }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Filter Bills</button>
+                </div>
+            </form>
+
+            <h2 class="mb-4">Bills for {{ selected_vendor.name }}</h2>
+
+            {% if grouped_bills %}
+                {% for group in grouped_bills %}
+                    <h5 class="mb-3">
+                        Group: Combined Pay = <strong>{{ group.combined_pay|default:"N/A" }}</strong>,
+                        Bill Date = <strong>{{ group.bill_date|date:"Y-m-d" }}</strong>
+                    </h5>
+
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Bill Number</th>
+                                <th>Bill Amount</th>
+                                <th>Payment Status</th>
+                                <th>Payment Mode</th>
+                                <th>Cheque Number</th>
+                                <th>Cheque Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bill in group.bills_list %}
+                                <tr>
+                                    <td>{{ bill.bill_number }}</td>
+                                    <td>{{ bill.bill_amount }}</td>
+                                    <td>{{ bill.payment_status }}</td>
+                                    <td>{{ bill.payment_mode }}</td>
+                                    <td>{{ bill.cheque_number|default:"-" }}</td>
+                                    <td>{{ bill.cheque_date|date:"Y-m-d"|default:"-" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <hr>
+                {% endfor %}
+            {% else %}
+                {% if selected_date %}
+                    <p class="alert alert-warning">No bills found for the selected date.</p>
+                {% else %}
+                    <p class="text-muted fst-italic">Please select a bill date above and click "Filter Bills" to see bills.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+
+
+
+
+
+
+
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('payment_mode').addEventListener('change', function () {
+        const chequeFields = document.querySelectorAll('.cheque-fields');
+        if (this.value === 'cheque') {
+            chequeFields.forEach(field => field.classList.remove('d-none'));
+        } else {
+            chequeFields.forEach(field => field.classList.add('d-none'));
+        }
+    });
+</script>
+
+
+{% endblock %}

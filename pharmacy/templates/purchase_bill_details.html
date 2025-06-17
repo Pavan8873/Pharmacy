@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-secondary mb-4">Purchase Bill Details</h2>
+
+    <!-- Bill Information Card -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Bill Information</h5>
+        </div>
+        <div class="card-body">
+    <div class="row mb-2">
+        <div class="col-md-6"><strong>Vendor Name:</strong> {{ vendor_name }}</div>
+        <div class="col-md-6"><strong>Bill Number:</strong> {{ bill.bill_number }}</div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-6"><strong>Bill Date:</strong> {{ bill.bill_date|date:"d M Y" }}</div>
+        <div class="col-md-6"><strong>Bill Amount:</strong> ₹{{ bill.bill_amount }}</div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-6">
+            <strong>Payment Status:</strong>
+            <span class="badge 
+                {% if bill.payment_status|lower == 'paid' %}
+                    bg-success
+                {% else %}
+                    bg-warning
+                {% endif %}
+            ">
+                {{ bill.payment_status|capfirst }}
+            </span>
+        </div>
+        <div class="col-md-6"><strong>Payment Mode:</strong> {{ bill.payment_mode|capfirst }}</div>
+    </div>
+
+    {% if bill.payment_mode == 'cheque' %}
+    <div class="row mb-2">
+        <div class="col-md-6"><strong>Cheque Number:</strong> {{ bill.cheque_number }}</div>
+        <div class="col-md-6"><strong>Cheque Date:</strong> {{ bill.cheque_date|date:"d M Y" }}</div>
+    </div>
+    {% endif %}
+</div>
+
+    </div>
+
+    <!-- Medicines in Bill Section -->
+    <h4 class="text-secondary mb-3">Medicines in this Bill</h4>
+{% if purchase_items %}
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Medicine</th>
+           
+                <th>Batch No</th>
+                <th>Company</th>
+                <th>Expiry Date</th>
+                <th>Qty</th>
+                <th>Free Qty</th>
+                <th>MRP Rate</th>
+                <th>Shop Rate</th>
+                <th>Total Amount</th>
+       
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in purchase_items %}
+            <tr>
+                <td>{{ item.medicine_name }}</td>
+       
+                <td>{{ item.batch_number|default:"-" }}</td>
+                <td>{{ item.company_name }}</td>
+                <td>{{ item.expiry_date|date:"d M Y" }}</td>
+                <td>{{ item.qty_in_strip_history }} </td>
+                <td>{{ item.free_medicine_qty_history }}</td>
+                <td>₹{{ item.mrp_rate }}</td>
+                <td>₹{{ item.shop_rate }}</td>
+                <td>₹{{ item.total_amount }}</td>
+             
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">No medicines found for this bill.</p>
+{% endif %}
+
+
+    <!-- Back Button -->
+    <div class="mt-4 text-center">
+        <a href="{% url 'create_purchase' %}" class="btn btn-outline-primary">Back to Bill History</a>
+    </div>
+</div>
+{% endblock %}

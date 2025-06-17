@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .low-qty {
+        background-color: #fff3f3;
+    }
+    .low-qty td {
+        color: #dc3545;
+        font-weight: 500;
+    }
+</style>
+<div class="container py-5">
+    <!-- Add New Medicine Form -->
+    <div class="card mb-5">
+ 
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-success text-white text-center rounded-top-4">
+                <h4 class="mb-0">➕ Add New Medicine</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'add_medicine1' %}" class="row g-4">
+                    {% csrf_token %}
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Medicine Name</label>
+                        <input type="text" name="medicine_name" class="form-control form-control-lg" placeholder="Enter medicine name" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="medicine_type" class="form-label fw-semibold">Medicine Type</label>
+                        <select name="medicine_type" id="medicine_type" class="form-select form-select-lg" required>
+                            <option value="" disabled selected>Select type</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="capsule">Capsule</option>
+                            <option value="sachet">Sachet</option>
+                            <option value="cream/jel">Cream/Jel</option>
+                            <option value="liquid">Liquid</option>
+                            <option value="cream">Cream</option>
+                            <option value="fluid">Fluid</option>
+                            <option value="injection">Injection</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Number of Medicines per Strip</label>
+                        <input type="number" name="number_of_medicines_per_strip" class="form-control form-control-lg"  placeholder="e.g., 10" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Discount (%)</label>
+                        <input type="number" step="0.01" min="0" name="discount" class="form-control form-control-lg" value="0.00" placeholder="e.g., 5.5">
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-lg btn-success px-5">Add Medicine</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Medicine List -->
+    
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center rounded-top-4">
+            <h4 class="mb-0">💊 Medicine Details</h4>
+        </div>
+        <div class="card-body">
+            {% if medicines %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle text-center">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>No. of Medicines per Strip</th>
+                                <th>Discount</th>
+                     
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for medicine in medicines %}
+                            <tr class="{% if medicine.qty_in_strip < 10 %}low-qty{% endif %}">
+                                <td><strong>{{ medicine.medicine_name }}</strong></td>
+                                <td><span class="badge bg-secondary">{{ medicine.medicine_type|capfirst }}</span></td>
+                                <td>{{ medicine.Number_of_medicines_per_strip }}</td>
+                                <td><span class="text-success">{{ medicine.discount }}%</span></td>
+                               
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'edit_medicine' medicine.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <a href="{% url 'delete_medicine' medicine.id %}" 
+                                        class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to delete this medicine?');">
+                                        Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center rounded-3">
+                    No medicine data available.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .blink-row {
+        animation: blink 1s step-start 0s infinite;
+        background-color: #fff3cd !important;
+        color: #dc3545 !important;
+        font-weight: bold;
+    }
+    @keyframes blink {
+        50% { opacity: 0; }
+    }
+</style>
+{% endblock %}

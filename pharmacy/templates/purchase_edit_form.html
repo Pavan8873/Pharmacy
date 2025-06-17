@@ -17,12 +17,12 @@
             
             <div class="col-md-6 mb-3">
                 <label class="form-label">Pack Quantity</label>
-                <input type="number" name="pack_quantity" class="form-control" value="{{ purchase.pack_quantity }}" required>
+                <input type="number" name="pack_quantity" class="form-control" value="{{ purchase.Number_of_medicines_per_strip }}" required>
             </div>
             
             <div class="col-md-6 mb-3">
                 <label class="form-label">Quantity per Strip</label>
-                <input type="number" name="qty_per_strip" class="form-control" value="{{ purchase.qty_per_strip }}" required>
+                <input type="number" name="qty_per_strip" class="form-control" value="{{ purchase.qty_in_strip }}" required>
             </div>
             
             <div class="col-md-6 mb-3">
@@ -37,7 +37,8 @@
             
             <div class="col-md-6 mb-3">
                 <label class="form-label">Expiry Date</label>
-                <input type="date" name="expiry_date" class="form-control" value="{{ purchase.expiry_date }}" required>
+                <input type="date" name="expiry_date" class="form-control" value="{{ purchase.expiry_date|date:'Y-m-d' }}" required>
+
             </div>
             
             <div class="col-md-6 mb-3">

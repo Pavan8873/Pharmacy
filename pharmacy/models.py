@@ -109,30 +109,198 @@ class PurchaseBillDetails(models.Model):
 
     def __str__(self):
         return f"{self.medicine.name} x {self.qty} at {self.medicine_price} each"
+# from django.db import models
+# from datetime import date
+
+# class PurchaseHistory(models.Model):
+#     MEDICINE_TYPES = [
+#         ('tablet', 'Tablet'),
+#         ('cream/jel', 'Cream/Jel'),
+#         ('liquid', 'Liquid'),
+#     ]
+
+#     medicine_name = models.CharField(max_length=255)
+#     medicine_type = models.CharField(max_length=50, choices=MEDICINE_TYPES)
+#     Number_of_medicines_per_strip = models.PositiveIntegerField(help_text="Number of packs (e.g., 6s or 10s)")
+#     qty_in_strip = models.PositiveIntegerField()
+#     free_medicine_qty = models.PositiveIntegerField(default=0)
+#     company_name = models.CharField(max_length=255)
+#     expiry_date = models.DateField()
+#     mrp_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Selling price")
+#     shop_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Buying price")
+#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     purchase_date = models.DateField(auto_now_add=True)
+    
+
+#     def __str__(self):
+#         return f"{self.medicine_name} from {self.company_name}"
+
+#     @property
+#     def is_expired(self):
+#         return self.expiry_date < date.today()
+# from django.db import models
+# from datetime import date
+
+# class Bill1(models.Model):  # Renamed Bill1 to Bill
+#     PAYMENT_STATUS = [
+#         ('paid', 'Paid'),
+#         ('pending', 'Pending'),
+#     ]
+
+#     PAYMENT_MODE = [
+#         ('cash', 'Cash'),
+#         ('cheque', 'Cheque'),
+#     ]
+
+#     bill_number = models.CharField(max_length=100, unique=True)
+#     bill_date = models.DateField()
+#     bill_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS)
+#     payment_mode = models.CharField(max_length=10, choices=PAYMENT_MODE)
+#     cheque_number = models.CharField(max_length=100, null=True, blank=True)  # Optional, for cheque payments
+#     cheque_date = models.DateField(null=True, blank=True)  # Optional, for cheque payments
+
+#     def __str__(self):
+#         return f"Bill #{self.bill_number} - {self.payment_status.title()} ({self.payment_mode.title()})"
+
+
+# class PurchaseHistory(models.Model):
+#     MEDICINE_TYPES = [
+#         ('tablet', 'Tablet'),
+#         ('capsule', 'Capsule'),
+#         ('sachet', 'Sachet'),
+#         ('cream', 'Cream'),
+#         ('fluid', 'Fluid'),
+#         ('injection', 'Injection'),
+#     ]
+#     UNIT_TYPE = [
+#         ('strip', 'Strip-wise'),
+#         ('unit', 'Unit-wise'),
+#     ]
+#     bill = models.ForeignKey('Bill1', on_delete=models.CASCADE, related_name='purchases', null=True, blank=True)
+#     batch_number = models.CharField(max_length=100, null=True, blank=True)
+#     medicine_name = models.CharField(max_length=255)
+#     medicine_type = models.CharField(max_length=50, choices=MEDICINE_TYPES)
+#     # Automatic based on medicine type
+#     unit_type = models.CharField(
+#         max_length=10,
+#         choices=[('strip', 'Strip-wise'), ('unit', 'Unit-wise')],
+#         null=True,
+#         blank=True,
+#     )
+#     Number_of_medicines_per_strip = models.PositiveIntegerField(
+#         help_text="Applicable for strip-wise medicines only", null=True, blank=True
+#     )
+#     qty_in_strip = models.PositiveIntegerField()
+#     free_medicine_qty = models.PositiveIntegerField(default=0)
+#     company_name = models.CharField(max_length=255)
+#     expiry_date = models.DateField()
+#     mrp_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Selling price")
+#     shop_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Buying price")
+#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     purchase_date = models.DateField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.medicine_name} from {self.company_name} (Batch {self.batch_number})"
+
+#     @property
+#     def is_expired(self):
+#         return self.expiry_date < date.today()
+
+#     def save(self, *args, **kwargs):
+#         # Automatically set unit type based on medicine_type
+#         if self.medicine_type in ['tablet', 'capsule']:
+#             self.unit_type = 'strip'
+#         else:
+#             self.unit_type = 'unit'
+#         super().save(*args, **kwargs)
+class Bill1(models.Model):  # Renamed from Bill1
+    PAYMENT_STATUS = [
+        ('paid', 'Paid'),
+        ('pending', 'Pending'),
+    ]
+
+    PAYMENT_MODE = [
+        ('cash', 'Cash'),
+        ('cheque', 'Cheque'),
+    ]
+
+    bill_number = models.CharField(max_length=100, unique=True)
+    bill_date = models.DateField(null=True, blank=True)
+
+
+    bill_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS)
+    payment_mode = models.CharField(max_length=10, choices=PAYMENT_MODE)
+    cheque_number = models.CharField(max_length=100, null=True, blank=True)
+    cheque_date = models.DateField(null=True, blank=True)
+    combined_pay = models.CharField(max_length=100, null=True, blank=True)
+
+
+    def __str__(self):
+        return f"Bill #{self.bill_number} - {self.payment_status.title()} ({self.payment_mode.title()})"
+
+
+# class PurchaseHistory(models.Model):
+#     MEDICINE_TYPES = [
+#         ('tablet', 'Tablet'),
+#         ('capsule', 'Capsule'),
+#         ('sachet', 'Sachet'),
+#         ('cream', 'Cream'),
+#         ('fluid', 'Fluid'),
+#         ('injection', 'Injection'),
+#     ]
+
+#     bill = models.ForeignKey(Bill1, on_delete=models.CASCADE, related_name='purchases')  # fixed FK
+#     batch_number = models.CharField(max_length=100, null=True, blank=True)
+#     medicine_name = models.CharField(max_length=255)
+#     medicine_type = models.CharField(max_length=50, choices=MEDICINE_TYPES)
+#     unit_type = models.CharField(max_length=10, choices=[('strip', 'Strip-wise'), ('unit', 'Unit-wise')], null=True, blank=True)
+#     Number_of_medicines_per_strip = models.PositiveIntegerField(null=True, blank=True)
+#     qty_in_strip = models.PositiveIntegerField()
+#     free_medicine_qty = models.PositiveIntegerField(default=0)
+#     company_name = models.CharField(max_length=255)
+#     expiry_date = models.DateField()
+#     mrp_rate = models.DecimalField(max_digits=10, decimal_places=2)
+#     shop_rate = models.DecimalField(max_digits=10, decimal_places=2)
+#     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     purchase_date = models.DateField(auto_now_add=True)
+#     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Discount percentage")
+
+#     def __str__(self):
+#         return f"{self.medicine_name} from {self.company_name} (Batch {self.batch_number})"
+
+#     @property
+#     def is_expired(self):
+#         return self.expiry_date < date.today()
+
+#     def save(self, *args, **kwargs):
+#         if self.medicine_type in ['tablet', 'capsule']:
+#             self.unit_type = 'strip'
+#         else:
+#             self.unit_type = 'unit'
+#         super().save(*args, **kwargs)
+
 from django.db import models
 from datetime import date
 
 class PurchaseHistory(models.Model):
-    MEDICINE_TYPES = [
-        ('tablet', 'Tablet'),
-        ('cream/jel', 'Cream/Jel'),
-        ('liquid', 'Liquid'),
-    ]
-
+    bill = models.ForeignKey(Bill1, on_delete=models.CASCADE, related_name='purchases')  # fixed FK
+    batch_number = models.CharField(max_length=100, null=True, blank=True)
     medicine_name = models.CharField(max_length=255)
-    medicine_type = models.CharField(max_length=50, choices=MEDICINE_TYPES)
-    pack_quantity = models.PositiveIntegerField(help_text="Number of packs (e.g., 6s or 10s)")
-    qty_per_strip = models.PositiveIntegerField()
+    qty_in_strip = models.DecimalField(max_digits=5, decimal_places=1)
     free_medicine_qty = models.PositiveIntegerField(default=0)
     company_name = models.CharField(max_length=255)
     expiry_date = models.DateField()
-    mrp_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Selling price")
-    shop_rate = models.DecimalField(max_digits=10, decimal_places=2, help_text="Buying price")
+    mrp_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    shop_rate = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     purchase_date = models.DateField(auto_now_add=True)
+    qty_in_strip_history = models.IntegerField()
+    free_medicine_qty_history = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.medicine_name} from {self.company_name}"
+        return f"{self.medicine_name} from {self.company_name} (Batch {self.batch_number})"
 
     @property
     def is_expired(self):
@@ -140,12 +308,49 @@ class PurchaseHistory(models.Model):
 
 class SalesRegister(models.Model):
     customer_name = models.CharField(max_length=255)
+    bill_number = models.CharField(max_length=100)
     medicine = models.ForeignKey(PurchaseHistory, on_delete=models.CASCADE)
-    qty_strips = models.PositiveIntegerField(default=0)
-    qty_loose = models.PositiveIntegerField(default=0)
+    qty_in_strips = models.PositiveIntegerField(default=0)
+    qty_in_loose = models.PositiveIntegerField(default=0)
     discount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     sale_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Sale to {self.customer_name} - {self.medicine.medicine_name}"
+from django.db import models
+
+class MedicineMaster(models.Model):
+    MEDICINE_TYPES = [
+        ('tablet', 'Tablet'),
+        ('capsule', 'Capsule'),
+        ('sachet', 'Sachet'),
+        ('cream/jel', 'Cream/Jel'),
+        ('liquid', 'Liquid'),
+        ('cream', 'Cream'),
+        ('fluid', 'Fluid'),
+        ('injection', 'Injection'),
+    ]
+
+    medicine_name = models.CharField(max_length=255)
+    medicine_type = models.CharField(max_length=50, choices=MEDICINE_TYPES)
+    Number_of_medicines_per_strip = models.PositiveIntegerField(help_text="Number of packs (e.g., 6s or 10s)")
+    purchase_date = models.DateField(auto_now_add=True)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Discount percentage")
+
+    def __str__(self):
+        return f"{self.medicine_name} "
+
+# models.py
+
+from django.db import models
+
+class Vendor(models.Model):
+    
+    name = models.CharField(max_length=100)
+    address = models.TextField()
+    telephone = models.CharField(max_length=15)
+    gstin = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.name

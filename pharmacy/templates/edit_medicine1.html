@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Medicine - {{ medicine.medicine_name }} (Batch {{ medicine.batch_number }})</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Medicine Name</label>
+                <input type="text" name="medicine_name" value="{{ medicine.medicine_name }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Company Name</label>
+                <input type="text" name="company_name" value="{{ medicine.company_name }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Batch Number</label>
+                <input type="text" name="batch_number" value="{{ medicine.batch_number }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Quantity in Strip</label>
+                <input type="number" name="qty_in_strip" value="{{ medicine.qty_in_strip }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Free Medicine Quantity</label>
+                <input type="number" name="free_medicine_qty" value="{{ medicine.free_medicine_qty }}" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">MRP Rate</label>
+                <input type="number" step="0.01" name="mrp_rate" value="{{ medicine.mrp_rate }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Shop Rate</label>
+                <input type="number" step="0.01" name="shop_rate" value="{{ medicine.shop_rate }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Total Amount</label>
+                <input type="number" step="0.01" name="total_amount" value="{{ medicine.total_amount }}" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Expiry Date</label>
+                <input type="date" name="expiry_date" value="{{ medicine.expiry_date }}" class="form-control" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Medicine</button>
+        <a href="{% url 'view_medicine_details' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

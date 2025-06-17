@@ -3,158 +3,543 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Register</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- Include select2 CSS for search functionality -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/sales_register.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-</head>
-<body class="bg-light py-5">
-
-<div class="container bg-white rounded shadow-sm p-5">
-    <!-- Updated title with bold styling -->
-    <h2 class="mb-4 text-center text-primary font-weight-bold">Sales Register</h2>
-    
-    <form method="POST">
-        {% csrf_token %}
-
-        <!-- Customer Name -->
-        <div class="mb-3 row">
-            <div class="col-md-6">
-                <label for="customer_name" class="form-label font-weight-bold">Customer Name</label>
-                <input type="text" class="form-control" name="customer_name" id="customer_name" required>
-            </div>
-
-            <!-- Medicine Selection with Search -->
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Medicine</label>
-                <select class="form-select" name="medicine" id="medicine" required>
-                    <option value="">-- Select --</option>
-                    {% for med in medicines %}
-                    <option value="{{ med.id }}">{{ med.medicine_name }} - {{ med.company_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <!-- Quantity Fields (side by side) -->
-        <div class="mb-3 row">
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Qty (Strips)</label>
-                <input type="number" class="form-control" name="qty_strips" id="qty_strips" value="0" min="0">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Qty (Loose)</label>
-                <input type="number" class="form-control" name="qty_loose" id="qty_loose" value="0" min="0">
-            </div>
-        </div>
-
-        <!-- Rate per Strip and Loose (side by side) -->
-        <div class="mb-3 row">
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Rate/Strip</label>
-                <input type="text" class="form-control" id="rate_strip" readonly>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Rate/Loose</label>
-                <input type="text" class="form-control" id="rate_loose" readonly>
-            </div>
-        </div>
-
-        <!-- Discount Field -->
-        <div class="mb-3 row">
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Discount</label>
-                <input type="number" class="form-control" name="discount" id="discount" value="0" min="0">
-            </div>
-
-            <!-- Total Amount -->
-            <div class="col-md-6">
-                <label class="form-label font-weight-bold">Total Amount</label>
-                <input type="text" class="form-control" id="total_amount" name="total_amount" readonly>
-            </div>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary w-100 font-weight-bold">Save Sale</button>
-    </form>
-
-    {% if sales %}
-    <h3 class="mt-5 text-center text-info font-weight-bold">Sales History</h3>
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Customer Name</th>
-                    <th>Medicine</th>
-                    <th>Qty (Strips)</th>
-                    <th>Qty (Loose)</th>
-                    <th>Discount</th>
-                    <th>Total Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sale in sales %}
-                <tr>
-                    <td>{{ sale.customer_name }}</td>
-                    <td>{{ sale.medicine.medicine_name }} - {{ sale.medicine.company_name }}</td>
-                    <td>{{ sale.qty_strips }}</td>
-                    <td>{{ sale.qty_loose }}</td>
-                    <td>{{ sale.discount }}</td>
-                    <td>{{ sale.total_amount }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-</div>
-
-<script>
-    let rateStrip = 0;
-    let rateLoose = 0;
-
-    // Initialize select2 on the medicine dropdown
-    $('#medicine').select2();
-
-    // Fetch medicine details when selected
-    $('#medicine').change(function () {
-        const medicineId = $(this).val();
-        if (medicineId) {
-            $.post("{% url 'get-medicine-details' %}", {
-                medicine_id: medicineId,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            }, function (data) {
-                rateStrip = data.rate_per_strip;
-                rateLoose = data.rate_per_loose;
-                $('#rate_strip').val(rateStrip);
-                $('#rate_loose').val(rateLoose);
-                calculateTotal();
-            });
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
-    });
 
-    // Recalculate total whenever input changes
-    $('#qty_strips, #qty_loose, #discount').on('input', function () {
-        calculateTotal();
-    });
+        .container {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
 
-    // Function to calculate total amount
-    function calculateTotal() {
-        let strips = parseInt($('#qty_strips').val()) || 0;
-        let loose = parseInt($('#qty_loose').val()) || 0;
-        let discount = parseFloat($('#discount').val()) || 0;
+        h2,
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
 
-        let total = (strips * rateStrip) + (loose * rateLoose) - discount;
-        $('#total_amount').val(total.toFixed(2));
+        .form-label {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        input[readonly] {
+            background-color: #e9ecef;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 1.1rem;
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-success,
+        .btn-danger {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .btn-add-medicine {
+            margin-top: 1rem;
+        }
+
+        .medicine-item {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background-color: #f8f9fa;
+        }
+
+        .table {
+            margin-top: 1.5rem;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: auto;
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+
+        .alert {
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+            border-color: #545b62;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2 class="mb-4 text-center text-primary">Sales Register</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    <label for="customer_name" class="form-label font-weight-bold">Customer Name</label>
+                    <input type="text" class="form-control" name="customer_name" id="customer_name" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label font-weight-bold">Bill Number (Auto Generated)</label>
+                    <input type="text" class="form-control" name="bill_number" value="{{ bill_number }}" readonly>
+
+                </div>
+            </div>
+
+
+            <div id="medicine-entries">
+                <div class="medicine-item">
+                    <div class="row mb-3 gx-2">
+                        <!-- <div class="col-md-4">
+                            <label class="form-label font-weight-bold">Medicine</label>
+                            <select class="form-select medicine-select" name="medicines[0][medicine]" required>
+                                <option value="">-- Select --</option>
+                                {% for med in medicines %}
+                                <option value="{{ med.id }}" data-type="{{ med.medicine_type }}"
+                                    data-rate-strip="{{ med.rate_per_strip }}"
+                                    data-rate-loose="{{ med.rate_per_loose }}">{{ med.medicine_name }} - {{med.batch_number }} ({{ med.medicine_type }})</option>
+                                {% endfor %}
+                            </select>
+                        </div> -->
+                        <div class="  col-md-4">
+                            <label class="form-label font-weight-bold">Medicine Name</label>
+                            <select class="form-select medicine-select" name="medicines[0][medicine]" required>
+                                <option value="">-- Select --</option>
+                                {% for med in medicines %}
+                                <option value="{{ med.medicine_name }}|{{med.batch_number}}|{{med.id}}"
+                                        data-type="{{ med.medicine_type }}"
+                                        data-rate-strip="{{ med.rate_per_strip }}"
+                                        data-rate-loose="{{ med.rate_per_loose }}">
+                                    {{ med.medicine_name }} - {{ med.batch_number }} 
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        
+                        <div class="col-md-2">
+                            <label class="form-label font-weight-bold">Qty (Strips)</label>
+                            <input type="number" class="form-control qty-strips" name="medicines[0][qty_strips]"
+                                value="0" min="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label font-weight-bold">Qty (Loose)</label>
+                            <input type="number" class="form-control qty-loose" name="medicines[0][qty_loose]" value="0"
+                                min="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label font-weight-bold">Unit</label>
+                            <input type="text" class="form-control rate-strip" name="medicines[0][rate_strip]" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label font-weight-bold">Rate/Loose</label>
+                            <input type="text" class="form-control rate-loose" name="medicines[0][rate_loose]" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3 gx-2 align-items-end">
+                        <input type="hidden" class="medicine-id" value="123"> <!-- replace 123 with actual medicine ID -->
+
+                        <!-- <div class="col-md-3">
+                            <label class="form-label font-weight-bold">Apply Discount?</label>
+                            <div>
+                                <input type="radio" name="medicines[0][apply_discount]" value="yes" class="apply-discount-radio" checked> Yes
+                                <input type="radio" name="medicines[0][apply_discount]" value="no" class="apply-discount-radio"> No
+                            </div>
+                        </div> -->
+
+                        <div class="col-md-3">
+                            <label class="form-label font-weight-bold">Discount (%)</label>
+                            <input type="number" class="form-control discount" name="medicines[0][discount]" value="0"
+                                min="0" max="100" readonly>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label font-weight-bold">Item Total</label>
+                            <input type="text" class="form-control item-total" name="medicines[0][item_total]" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-sm btn-remove-medicine">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-success btn-sm btn-add-medicine bi bi-plus-circle"> Add Medicine</button>
+
+            <div class="mb-3 row mt-4">
+                <label for="total_amount" class="col-md-6 col-form-label text-md-end font-weight-bold">Total
+                    Amount</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control font-weight-bold" id="total_amount" name="total_amount"
+                        readonly>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 font-weight-bold">Save Sales</button>
+        </form>
+
+        <hr class="my-4">
+
+        <form method="get" class="row g-3 mb-4 align-items-end">
+            <div class="col-md-4">
+                <label for="filter_date" class="form-label font-weight-bold">Select Date</label>
+                <input type="date" class="form-control" id="filter_date" name="filter_date"
+                    value="{{ request.GET.filter_date }}">
+            </div>
+            <div class="col-md-auto">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </div>
+        </form>
+
+   {% if sales_by_bill %}
+    <h3 class="mb-4 text-center">Sales History for {{ filter_date|default:"All Dates" }}</h3>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+        {% for bill_number, sales_in_bill in sales_by_bill.items %}
+            <div class="col">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <strong>Bill #{{ bill_number }}</strong>
+                        <span class="badge bg-light text-dark rounded-pill">{{ sales_in_bill|length }} item{{ sales_in_bill|length|pluralize }}</span>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <strong>Customer:</strong> {{ sales_in_bill.0.customer_name }}<br>
+                            <strong>Date:</strong> {{ sales_in_bill.0.sale_date|date:"M d, Y h:i A" }}
+                        </p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Qty (Strips)</th>
+                                        <th>Qty (Loose)</th>
+                                        <th>Discount</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sale in sales_in_bill %}
+                                        <tr>
+                                            <td>{{ sale.medicine.medicine_name }}</td>
+                                            <td>
+                                                {% if sale.medicine.medicine_type == 'tablet' %}
+                                                    {{ sale.qty_in_strips }}
+                                                {% else %}
+                                                    {{ sale.qty_in_strips }} units
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                             
+                                                    {{ sale.qty_in_loose }}
+                                           
+                                         
+                                            </td>
+                                            <td>%{{ sale.discount|floatformat:2 }}</td>
+                                            <td>₹{{ sale.total_amount|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                        <strong>Total: ₹{{ sales_in_bill.0.bill_total_amount|floatformat:2 }}</strong>
+                        <a href="{% url 'print_bill_pdf' bill_number=bill_number %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-printer me-1"></i> Print Bill (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-body text-end">
+            <h4 class="card-title mb-0"><strong>Grand Total: ₹{{ grand_total_amount|floatformat:2 }}</strong></h4>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-warning text-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> No sales found for the selected date.
+    </div>
+{% endif %}
+<script>
+    
+
+document.addEventListener('DOMContentLoaded', function () {
+    const radios = document.querySelectorAll('.apply-discount-radio');
+    const discountInput = document.querySelector('.discount');
+    const medicineId = document.querySelector('.medicine-id').value;
+    
+    function fetchDiscountFromBackend(medicineId) {
+        fetch(`/get-discount/?medicine_id=${medicineId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.discount !== undefined) {
+                    discountInput.value = data.discount;
+                    discountInput.readOnly = false;
+                } else {
+                    discountInput.value = 0;
+                    discountInput.readOnly = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching discount:', error);
+                discountInput.value = 0;
+                discountInput.readOnly = true;
+            });
     }
+
+    function toggleDiscountField() {
+        const selected = document.querySelector('.apply-discount-radio:checked');
+        if (selected && selected.value === 'yes') {
+            fetchDiscountFromBackend(medicineId);
+        } else {
+            discountInput.value = 0;
+            discountInput.readOnly = true;
+        }
+    }
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', toggleDiscountField);
+    });
+
+    toggleDiscountField(); // Initial call
+});
 </script>
 
+
+    <script>
+        $(document).ready(function () {
+            let medicineCounter = 1;
+
+            // Initialize select2 on all medicine dropdowns
+            $(document).on('select2:open', () => {
+                document.querySelectorAll('.medicine-select').forEach(select => {
+                    if (!select.classList.contains('select2-hidden-accessible')) {
+                        $(select).select2();
+                    }
+                });
+            });
+            $('.medicine-select').select2();
+
+
+            function calculateItemTotal(item) {
+                const qtyStrips = parseInt(item.find('.qty-strips').val()) || 0;
+                const qtyLoose = parseInt(item.find('.qty-loose').val()) || 0;
+                const rateStrip = parseFloat(item.find('.rate-strip').val()) || 0;
+                const rateLoose = parseFloat(item.find('.rate-loose').val()) || 0;
+                const discountPercentage = parseFloat(item.find('.discount').val()) || 0;
+
+                let itemTotal = (qtyStrips * rateStrip) + (qtyLoose * rateLoose);
+                const discountAmount = (itemTotal * discountPercentage) / 100;
+                itemTotal -= discountAmount;
+
+                item.find('.item-total').val(itemTotal.toFixed(2));
+                calculateGrandTotal();
+            }
+
+            function calculateGrandTotal() {
+                let grandTotal = 0;
+                $('.item-total').each(function () {
+                    grandTotal += parseFloat($(this).val()) || 0;
+                });
+                $('#total_amount').val(grandTotal.toFixed(2));
+            }
+
+            // Fetch medicine details when selected
+            $(document).on('change', '.medicine-select', function () {
+                const $this = $(this);
+                console.log($this,"+_+_+_")
+                const medicineId = $this.val();
+                console.log(medicineId,"_+_+_")
+                const $medicineItem = $this.closest('.medicine-item');
+
+                if (medicineId) {
+                    console.log("_+_+_+_+_+_+@")
+                    $.post("{% url 'get-medicine-details' %}", {
+                        medicine_id: medicineId,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    }, function (data) {
+                        if (data && data.rate_per_strip !== undefined) {
+                            const medicineType = $this.find(':selected').data('type');
+                            let rateStrip = parseFloat(data.rate_per_strip);
+                            let rateLoose = parseFloat(data.rate_per_loose);
+                            let discount= parseFloat(data.discount);
+
+                            if (medicineType === 'Liquid') {
+                                rateStrip *= 1.2;
+                                rateLoose *= 1.2;
+                            }
+
+                            $medicineItem.find('.rate-strip').val(rateStrip.toFixed(2));
+                            $medicineItem.find('.rate-loose').val(rateLoose.toFixed(2));
+                            $medicineItem.find('.discount').val(discount.toFixed(2));
+                            calculateItemTotal($medicineItem);
+                        } else {
+                            alert("Error fetching medicine details. Please try again.");
+                        }
+                    });
+                } else {
+                    $medicineItem.find('.rate-strip').val('');
+                    $medicineItem.find('.rate-loose').val('');
+                    $medicineItem.find('.discount').val('');
+                    $medicineItem.find('.item-total').val('0.00');
+                    calculateGrandTotal();
+                }
+            });
+
+            // Recalculate item total whenever quantity or discount changes
+            $(document).on('input', '.qty-strips, .qty-loose, .discount', function () {
+                calculateItemTotal($(this).closest('.medicine-item'));
+            });
+
+            // Add new medicine entry
+           
+            // Add new medicine entrys
+        $('.btn-add-medicine').click(function () {
+            const newItem = $('.medicine-item').first().clone();
+            newItem.find('input, select').each(function () {
+                const name = $(this).attr('name');
+                if (name) {
+                    const newName = name.replace(/\[\d+\]/, `[${medicineCounter}]`);
+                    $(this).attr('name', newName);
+                }
+                if (!$(this).hasClass('rate-strip') && !$(this).hasClass('rate-loose') && !$(this).hasClass('item-total')) {
+                    $(this).val(0);
+                } else {
+                    $(this).val('');
+                }
+            });
+            newItem.find('.select2-container').remove();
+            newItem.find('.medicine-select').removeClass("select2-hidden-accessible").removeAttr("data-select2-id").val('');
+           
+            console.log(newItem,"_+++++++++++++++++++++++++++++++++++++++++++++")
+
+            $('#medicine-entries').append(newItem);
+            medicineCounter++;
+        });
+
+        // Remove medicine entry
+        $(document).on('click', '.btn-remove-medicine', function() {
+            if ($('#medicine-entries .medicine-item').length > 1) {
+                $(this).closest('.medicine-item').remove();
+                calculateGrandTotal(); // Recalculate total after removing an item
+            } else {
+                alert("At least one medicine entry is required.");
+            }
+        });
+
+        // Initial calculation on page load (in case of pre-filled values - though unlikely here)
+        calculateGrandTotal();
+    });
+
+        // Remove medicine entry
+        
+
+  
+
+    </script>
+
 </body>
+
 </html>
 {% endblock %}
